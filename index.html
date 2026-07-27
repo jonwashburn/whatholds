@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Holdfast</title>
+  <meta name="description" content="Holdfast is memory for long projects. It keeps what a project decided, how well each claim is actually supported, and every dead end with the measurement that killed it, then hands a new AI session the current version automatically." />
+  <meta property="og:title" content="Holdfast" />
+  <meta property="og:description" content="Memory for long projects. It records what failed as carefully as what worked, and hands a new AI session the current state automatically." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://whatholds.com/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0d0d0c;
+      --gray: #5b5953;
+      --paper: #f4f3ef;
+      --white: #ffffff;
+      --green: #0b7a3e;
+      --red: #c8401f;
+      --gold: #ffc328;
+      --rule: 2px solid var(--ink);
+      --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+      --display: "Archivo Black", "Inter", sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--ink); }
+    a:hover { text-decoration-thickness: 2px; }
+    .wrap { max-width: 56rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+    header { border-bottom: var(--rule); padding-bottom: 1.25rem; margin-bottom: 2rem; }
+    header .mark {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      margin: 0 0 0.35rem;
+    }
+    header .sub {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin: 0;
+    }
+
+    /* The one focal element on the page, matching the institute homepage: the thing a
+       first-time reader should read is a dated note, not a slogan. */
+    .letter { max-width: 42rem; margin: 0 auto 2.75rem; font-size: 0.94rem; }
+    .letter .date { font-family: var(--mono); font-size: 0.72rem; color: var(--gray); margin: 0 0 1rem; }
+    .letter p { margin: 0 0 0.85rem; }
+    .letter .sign { margin-top: 1.25rem; font-weight: 600; }
+    .letter .sign span { display: block; font-weight: 400; color: var(--gray); font-size: 0.85rem; }
+    @media (min-width: 720px) {
+      .letter {
+        border: 2.5px solid var(--ink);
+        padding: 1.75rem 1.9rem 1.6rem;
+        box-shadow: 4px 4px 0 var(--ink);
+      }
+    }
+
+    h2 {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: var(--gray);
+      border-top: var(--rule);
+      padding-top: 1.5rem;
+      margin: 2.5rem 0 1rem;
+    }
+    p, li { margin: 0 0 0.85rem; }
+    .lede { font-size: 0.98rem; max-width: 46rem; }
+
+    ol.does, ul.plain { list-style: none; margin: 0; padding: 0; }
+    ol.does { counter-reset: d; }
+    ol.does > li {
+      counter-increment: d;
+      padding: 0.95rem 0;
+      border-bottom: 1px solid #ddd;
+      display: grid;
+      grid-template-columns: 2.1rem 1fr;
+      gap: 0 0.9rem;
+    }
+    ol.does > li:last-child { border-bottom: 0; }
+    ol.does > li::before {
+      content: counter(d);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--gray);
+      padding-top: 0.15rem;
+    }
+    ol.does .h { font-weight: 600; display: block; margin-bottom: 0.15rem; }
+    ol.does .b { font-size: 0.93rem; margin: 0; }
+    ol.does .n { font-family: var(--mono); font-size: 0.75rem; color: var(--gray); display: block; margin-top: 0.3rem; }
+
+    /* A record, shown as the tool stores it. Bordered, never shadowed: the focal box is
+       spent on the letter and there is only one. */
+    .rec { border: 2px solid var(--ink); padding: 0.9rem 1.05rem; margin: 1rem 0 1.4rem; background: var(--white); }
+    .rec .k { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); }
+    .rec .f { margin: 0.5rem 0 0; font-size: 0.92rem; }
+    .rec .f b { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray); font-weight: 500; display: block; }
+    .rec .id { font-family: var(--mono); font-size: 0.68rem; color: var(--gray); margin-top: 0.7rem; }
+    pre.out {
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      line-height: 1.5;
+      background: var(--paper);
+      padding: 0.8rem 0.95rem;
+      margin: 0.8rem 0 1.2rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      border-left: 2.5px solid var(--red);
+    }
+    .cap { font-family: var(--mono); font-size: 0.7rem; color: var(--gray); margin: -0.6rem 0 1.4rem; }
+
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin: 0.4rem 0 1rem; }
+    th, td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid #ddd; vertical-align: top; }
+    th { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); font-weight: 500; border-bottom: var(--rule); }
+    td.n { font-family: var(--mono); white-space: nowrap; }
+
+    /* Typed ink: a tag's colour is its meaning, learned once and then read at a glance. */
+    .t { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.07em; text-transform: uppercase; border: 1.5px solid var(--ink); padding: 0.1rem 0.4rem; white-space: nowrap; display: inline-block; }
+    .t.thm { background: var(--gold); }
+    .t.meas { color: var(--green); border-color: var(--green); }
+    .t.open { color: var(--red); border-color: var(--red); }
+    .t.soft { color: var(--gray); border-color: var(--gray); }
+
+    ul.won { padding-left: 1.15rem; }
+    ul.won li { margin-bottom: 0.6rem; }
+    footer { border-top: var(--rule); margin-top: 3rem; padding-top: 1rem; font-size: 0.88rem; }
+    footer p { margin: 0 0 0.5rem; }
+    .m { font-family: var(--mono); font-size: 0.72rem; color: var(--gray); }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="mark">Holdfast</p>
+    <p class="sub">Memory for long projects &middot; whatholds.com</p>
+  </header>
+
+  <div class="letter">
+    <p class="date">27 July 2026</p>
+    <p>I run a research institute with about fifty projects on the books, and every one of them
+    is the kind of thing that takes months. Physics derivations, a formal mathematics library,
+    protein folding, a language system. The work is slow in a particular way: most of what you
+    learn on a hard problem is which roads are closed.</p>
+
+    <p>For a long time I kept losing that. I would open a new session with an AI agent, spend
+    the first hour explaining the project, and then watch it walk confidently into something
+    we had already proved does not work. Weeks later I would find the note where we proved it.</p>
+
+    <p>So I built Holdfast. It is the memory. Every decision, every claim carrying a tag that
+    says how well we actually know it, and every dead end carrying the measurement that killed
+    it, written down as the work happens, by the agents doing the work. Then a new session gets
+    handed the current version of all of it automatically, in about two thousand tokens instead
+    of the hundred and ninety thousand it takes to read the files.</p>
+
+    <p>The nearest thing I can point at is a Cursor rule that writes itself out of the work.</p>
+
+    <p>What I did not expect was what it did to the honesty. When a claim has to carry the test
+    that would prove it wrong, you find out quickly which of your claims cannot carry one. Mine
+    could not, in seven places. I know which seven now, which is the part that matters.</p>
+
+    <p class="sign">Jonathan Washburn<span>Recognition Physics Institute &middot;
+    <a href="mailto:jon@recognitionphysics.org">jon@recognitionphysics.org</a></span></p>
+  </div>
+
+  <h2>What it does</h2>
+
+  <ol class="does">
+    <li>
+      <div>
+        <span class="h">Hands a new session the current state, not the files.</span>
+        <p class="b">The store is append-only, so a record is updated by writing another one
+        with the same id. What a session receives is the resolved value of every record after
+        supersession, which is a different thing from the newest file and a different thing
+        again from everything ever written.</p>
+        <span class="n">about 2,000 tokens, against about 190,000 to read one project's memory whole</span>
+      </div>
+    </li>
+    <li>
+      <div>
+        <span class="h">Records the dead ends, and refuses the ones that do not say what killed them.</span>
+        <p class="b">A killed route has to name the measurement or the argument that killed it,
+        and it has to say what the kill does not cover, because a negative result with no scope
+        gets read later as holding everywhere. Both are checked when the record is written.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <span class="h">Reads back at whatever depth you want.</span>
+        <p class="b">Start at the whole portfolio, drop into one project's binding decisions and
+        open questions, drop again into a single claim, and from there into the conversation and
+        the commits that produced it. Each level is a fixed budget, so the cost of orienting does
+        not grow with the size of the store.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <span class="h">Watches the store for what no single session can see.</span>
+        <p class="b">Scheduled passes over everything, looking for the things that are only
+        visible from outside one conversation: work held on a decision nobody made, a project
+        left alone while it still holds open questions, evidence that has stopped resolving, a
+        claim whose tag its own record no longer supports. They propose and never edit, because
+        a reader can say what a record is about and only its author can say what it kills.</p>
+      </div>
+    </li>
+  </ol>
+
+  <h2>Every claim carries how well it is known</h2>
+
+  <p class="lede">This is the part that changed how I work. A tag is not a confidence level, it
+  is a statement about what kind of support exists, and the weakest link sets it. Three
+  hypotheses do not compose into a theorem.</p>
+
+  <table>
+    <tbody>
+      <tr><td class="n"><span class="t thm">THEOREM</span></td><td>Proved, and the proof checks.</td></tr>
+      <tr><td class="n"><span class="t meas">MEASURED</span></td><td>An actual measurement, ours.</td></tr>
+      <tr><td class="n"><span class="t meas">EXTERNAL-MEASURED</span></td><td>An actual measurement, somebody else's.</td></tr>
+      <tr><td class="n"><span class="t soft">DERIVED-UNFORMALIZED</span></td><td>Derived on paper, not yet checked by a machine.</td></tr>
+      <tr><td class="n"><span class="t soft">HYPOTHESIS</span></td><td>A prediction, with the thing that would break it named.</td></tr>
+      <tr><td class="n"><span class="t soft">MODEL</span></td><td>A choice we made, not a fact we found.</td></tr>
+      <tr><td class="n"><span class="t open">OPEN</span></td><td>Not yet derived. A target, never an impossibility.</td></tr>
+    </tbody>
+  </table>
+
+  <p>The tag cannot be promoted by agreement. What promotes it is the real gate: a compiler, a
+  test, an instrument. That gate lives outside Holdfast, and Holdfast holds you to it.</p>
+
+  <h2>What it refuses</h2>
+
+  <p class="lede">A record that cannot be used later is worse than no record, so some of them are
+  simply not accepted. This is the actual message, not an illustration of one.</p>
+
+<pre class="out">record 2: a killed route needs `what_killed_it`, the measurement
+or argument that killed it, not a description of the route</pre>
+  <p class="cap">Refused on write. Restating the route is the commonest way a dead end fails to save anyone time.</p>
+
+  <h2>A real record</h2>
+
+  <p class="lede">This one is from Holdfast's memory of building Holdfast, this month. I was
+  about to add a feature that scores generated prose for how much it sounds like the person who
+  wrote the project, and the store stopped me: the measurement was already on file, from a
+  different effort, and it said the instrument does not work.</p>
+
+  <div class="rec">
+    <p class="k"><span class="t open">Killed route</span></p>
+    <p class="f"><b>Route</b>Scoring generated prose for how much it sounds like its author,
+    and showing that number.</p>
+    <p class="f"><b>What killed it</b>Measured twice. Best fingerprint distance gave an AUC of
+    0.57 with a 95 percent interval from 0.38 to 0.74, straddling chance and failing a bar set
+    in advance at 0.65. Pattern density as an authorship classifier gave 1.17x discrimination,
+    falling to 1.04x once a boundary bug was fixed.</p>
+    <p class="f"><b>What the kill does not cover</b>It kills the score as a gate or as a number
+    on the page. It does not kill generating prose grounded in real writing samples.</p>
+    <p class="f"><b>Do not revive unless</b>An authorship instrument clears a bar set in advance
+    with its lower interval bound above chance, on held-out text from more than one author.</p>
+    <p class="id">N-route-holdfast-voice-match-score &middot; written by the session that tried it</p>
+  </div>
+
+  <p>Four fields, and the last two are the ones that make it worth keeping. Without the scope, a
+  later session reads this as "voice work does not work" and abandons something that does.
+  Without the revival condition, the idea is dead forever rather than dead until the evidence
+  changes.</p>
+
+  <h2>In use</h2>
+
+  <p class="lede">Holdfast runs against the Recognition Physics Institute's own work. The store
+  was created on 16 July 2026; these are its numbers eleven days later, computed the same way
+  every time and on record like everything else.</p>
+
+  <table>
+    <thead><tr><th>Measured 27 July 2026</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Projects under memory</td><td class="n">51</td></tr>
+      <tr><td>Records</td><td class="n">6,856</td></tr>
+      <tr><td>Live claims</td><td class="n">2,511</td></tr>
+      <tr><td>Dead ends recorded, with what killed each one</td><td class="n">493</td></tr>
+      <tr><td>Of those, saying what the kill does not cover</td><td class="n">452</td></tr>
+      <tr><td>Live claims carrying a test that could break them, with evidence that still resolves</td><td class="n">2,438</td></tr>
+      <tr><td>Live claims carrying no such test</td><td class="n">7</td></tr>
+      <tr><td>Cited files that have moved or gone, out of 11,747</td><td class="n">292</td></tr>
+    </tbody>
+  </table>
+
+  <p>The last two rows are the point. A memory that only reported the good numbers would be a
+  dashboard. Those seven claims and those 292 stale pointers are defects in my own work, they are
+  on the page because the tool found them, and every one of them is now a thing I can fix.</p>
+
+  <h2>What it will not do</h2>
+
+  <ul class="won">
+    <li><strong>It will not write your claims for you.</strong> No language model sits in the
+    path that produces or scores a record. Records are written by whoever did the work and read
+    back by arithmetic; retrieval is ordinary keyword ranking rather than embeddings. The tool
+    therefore cannot invent a finding, which is the only reason its answers mean anything.</li>
+    <li><strong>It will not tell you whether you are right.</strong> It holds what kind of
+    support a claim has and what would refute it. Deciding is the compiler's job, or the
+    instrument's, or yours.</li>
+    <li><strong>It will not tell you the project is going well.</strong> There is no score.
+    Every count it reports comes paired with the cheapest way to fake that count, because a
+    single number gets satisfied in the cheapest way available.</li>
+    <li><strong>It is not a wiki and not a notes app.</strong> Nobody sits down to write in it.
+    The record is a by-product of the work, produced at the end of a session by the agent that
+    did the work, or it does not get produced at all.</li>
+  </ul>
+
+  <h2>Status</h2>
+
+  <p>Holdfast works and is in daily use across fifty-one projects, inside Cursor and Claude
+  Code. It is stdlib Python with no service to sign up for and nothing to host: the store is
+  plain text files in your repository, and the tools are exposed to your agent directly.</p>
+
+  <p>It is not packaged for anyone else yet. If you are carrying a project that has lasted long
+  enough to have forgotten something expensive, I would like to hear from you, and I would rather
+  hear the specific thing you lost than a request for a demo.
+  <a href="mailto:jon@recognitionphysics.org">jon@recognitionphysics.org</a></p>
+
+  <footer>
+    <p>Built at the <a href="https://recognitionphysics.org/">Recognition Physics Institute</a>,
+    Austin, Texas.</p>
+    <p class="m">Every number on this page is computed from the store it describes, on the date
+    shown. Nothing here is a projection.</p>
+  </footer>
+
+</div>
+</body>
+</html>
