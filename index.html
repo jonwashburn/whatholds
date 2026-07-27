@@ -292,19 +292,39 @@ or argument that killed it, not a description of the route</pre>
     <thead><tr><th>Measured 27 July 2026</th><th>Value</th></tr></thead>
     <tbody>
       <tr><td>Projects under memory</td><td class="n">51</td></tr>
-      <tr><td>Records</td><td class="n">6,856</td></tr>
-      <tr><td>Live claims</td><td class="n">2,511</td></tr>
-      <tr><td>Dead ends recorded, with what killed each one</td><td class="n">493</td></tr>
-      <tr><td>Of those, saying what the kill does not cover</td><td class="n">452</td></tr>
-      <tr><td>Live claims carrying a test that could break them, with evidence that still resolves</td><td class="n">2,438</td></tr>
+      <tr><td>Records</td><td class="n">6,894</td></tr>
+      <tr><td>Live claims</td><td class="n">2,527</td></tr>
+      <tr><td>Dead ends recorded, with what killed each one</td><td class="n">498</td></tr>
+      <tr><td>Of those, saying what the kill does not cover</td><td class="n">457</td></tr>
+      <tr><td>Live claims carrying a test that could break them, with evidence that still resolves</td><td class="n">2,459</td></tr>
       <tr><td>Live claims carrying no such test</td><td class="n">7</td></tr>
-      <tr><td>Cited files that have moved or gone, out of 11,747</td><td class="n">292</td></tr>
+      <tr><td>Citations checked against the tree, of 12,229 made</td><td class="n">11,671</td></tr>
+      <tr><td>Of those, pointing at a file that has moved or gone</td><td class="n">146</td></tr>
     </tbody>
   </table>
 
-  <p>The last two rows are the point. A memory that only reported the good numbers would be a
-  dashboard. Those seven claims and those 292 stale pointers are defects in my own work, they are
-  on the page because the tool found them, and every one of them is now a thing I can fix.</p>
+  <p>The seven and the 146 are the point. A memory that only reported the good numbers would be
+  a dashboard. Those are defects in my own work, they are on the page because the tool found
+  them, and every one of them is now a thing I can fix.</p>
+
+  <h2>The number was wrong three times</h2>
+
+  <p class="lede">That last row is worth telling properly, because it is the failure mode a tool
+  like this has to survive.</p>
+
+  <p>It first read 1,060. Then a bug turned up: the check was stripping the leading dot off
+  every hidden file, so every rule and config the store cites read as missing. Corrected, 292.
+  Then, this morning, sorting the 292 by what each one probably was showed that most of them
+  were never file paths in the first place. The field also holds commit hashes, references to
+  other records, artifacts on other machines, and paths with a note typed after them. The check
+  understood one shape and quietly failed the rest. Corrected again, and told to answer "I
+  cannot check that" as a distinct answer from "it is gone": 146, with 558 citations named as
+  unanswerable and counted separately.</p>
+
+  <p>So the count fell by a factor of seven without a single file being repaired. Every drop was
+  a defect in the instrument, not an improvement in the work. That is the ordinary case rather
+  than bad luck, and it is why every number here prints its denominator: 457 of 498 can be
+  checked at a glance in a way that 92 percent cannot.</p>
 
   <h2>What it will not do</h2>
 
