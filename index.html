@@ -322,8 +322,16 @@ or argument that killed it, not a description of the route</pre>
   were never file paths in the first place. The field also holds commit hashes, references to
   other records, artifacts on other machines, and paths with a note typed after them. The check
   understood one shape and quietly failed the rest. Corrected again, and told to answer "I
-  cannot check that" as a distinct answer from "it is gone": 146, with 558 citations named as
-  unanswerable and counted separately.</p>
+  cannot check that" as a distinct answer from "it is gone": 285.</p>
+
+  <p>Then the new check got caught overreaching in the other direction, and this is the part I
+  would want to know about somebody else's tool. It had decided that 19 citations were unreadable
+  free text. They were real files: one directory in that tree is named
+  <em>Millennium Prize Problems</em>, and a rule that split on spaces took the first word and
+  gave up. Nothing in the check's own tests could see this, because every test agreed with it by
+  construction. What saw it was asking the opposite question: is anything I just called
+  uncheckable sitting right there in the file list? That question now runs on every pass and
+  prints what it finds. 146, with 558 citations named as unanswerable and counted apart.</p>
 
   <p>So the count fell by a factor of seven without a single file being repaired. Every drop was
   a defect in the instrument, not an improvement in the work. That is the ordinary case rather
